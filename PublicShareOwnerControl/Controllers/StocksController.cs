@@ -136,6 +136,28 @@ namespace PublicShareOwnerControl.Controllers
             return Ok();
         }
 
+        // Change ownership of existing shares
+        //[Authorize("BankingService.UserActions")]
+        [HttpPatch("{id}/LastTradedValue/{value}")]
+        public async Task<ActionResult> UpdateLastTradedValue([FromRoute] long id, [FromRoute] double value)
+        {
+            var stock = await _context.Stocks.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (stock == null)
+            {
+                _logger.LogError("Failed to find the Stock");
+                return NotFound("Failed to find the Stock");
+            }
+
+            var oldLastTradedValue = stock.LastTradedValue;
+            stock.LastTradedValue = value;
+
+            _logger.LogInformation("Updated the last traded value of stock {Stock} from {oldValue} to {NewValue}", stock.Name, oldLastTradedValue, stock.LastTradedValue);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         private static void SetBuyerAmount(OwnershipObject ownershipObject, Stock stock)
         {
             var shareHolderBuyer = stock.ShareHolders.FirstOrDefault(sh => sh.Id == ownershipObject.Buyer);
