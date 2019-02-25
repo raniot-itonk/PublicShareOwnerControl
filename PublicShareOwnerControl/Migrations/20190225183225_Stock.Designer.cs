@@ -10,7 +10,7 @@ using PublicShareOwnerControl.DB;
 namespace PublicShareOwnerControl.Migrations
 {
     [DbContext(typeof(PublicShareOwnerContext))]
-    [Migration("20190225175444_Stock")]
+    [Migration("20190225183225_Stock")]
     partial class Stock
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace PublicShareOwnerControl.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("PublicShareOwnerControl.DB.ShareHolder", b =>
+            modelBuilder.Entity("PublicShareOwnerControl.DB.Shareholder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -34,7 +34,7 @@ namespace PublicShareOwnerControl.Migrations
 
                     b.HasIndex("StockId");
 
-                    b.ToTable("ShareHolder");
+                    b.ToTable("Shareholder");
                 });
 
             modelBuilder.Entity("PublicShareOwnerControl.DB.Stock", b =>
@@ -52,7 +52,7 @@ namespace PublicShareOwnerControl.Migrations
                     b.ToTable("Stocks");
                 });
 
-            modelBuilder.Entity("PublicShareOwnerControl.DB.ShareHolder", b =>
+            modelBuilder.Entity("PublicShareOwnerControl.DB.Shareholder", b =>
                 {
                     b.HasOne("PublicShareOwnerControl.DB.Stock")
                         .WithMany("ShareHolders")

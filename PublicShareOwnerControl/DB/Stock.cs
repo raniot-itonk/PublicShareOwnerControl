@@ -7,6 +7,6 @@ namespace PublicShareOwnerControl.DB
         public long Id { get; set; }
         public string Name { get; set; }
         public double LastTradedValue { get; set; }
-        public Collection<ShareHolder> ShareHolders { get; set; }
+        public Collection<Shareholder> ShareHolders { get; set; }
     }
 }

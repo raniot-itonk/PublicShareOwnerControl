@@ -23,7 +23,7 @@ namespace PublicShareOwnerControl.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ShareHolder",
+                name: "Shareholder",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -32,9 +32,9 @@ namespace PublicShareOwnerControl.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShareHolder", x => x.Id);
+                    table.PrimaryKey("PK_Shareholder", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ShareHolder_Stocks_StockId",
+                        name: "FK_Shareholder_Stocks_StockId",
                         column: x => x.StockId,
                         principalTable: "Stocks",
                         principalColumn: "Id",
@@ -42,15 +42,15 @@ namespace PublicShareOwnerControl.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShareHolder_StockId",
-                table: "ShareHolder",
+                name: "IX_Shareholder_StockId",
+                table: "Shareholder",
                 column: "StockId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ShareHolder");
+                name: "Shareholder");
 
             migrationBuilder.DropTable(
                 name: "Stocks");

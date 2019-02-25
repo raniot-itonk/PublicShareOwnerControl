@@ -19,7 +19,7 @@ namespace PublicShareOwnerControl.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("PublicShareOwnerControl.DB.ShareHolder", b =>
+            modelBuilder.Entity("PublicShareOwnerControl.DB.Shareholder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -32,7 +32,7 @@ namespace PublicShareOwnerControl.Migrations
 
                     b.HasIndex("StockId");
 
-                    b.ToTable("ShareHolder");
+                    b.ToTable("Shareholder");
                 });
 
             modelBuilder.Entity("PublicShareOwnerControl.DB.Stock", b =>
@@ -50,7 +50,7 @@ namespace PublicShareOwnerControl.Migrations
                     b.ToTable("Stocks");
                 });
 
-            modelBuilder.Entity("PublicShareOwnerControl.DB.ShareHolder", b =>
+            modelBuilder.Entity("PublicShareOwnerControl.DB.Shareholder", b =>
                 {
                     b.HasOne("PublicShareOwnerControl.DB.Stock")
                         .WithMany("ShareHolders")

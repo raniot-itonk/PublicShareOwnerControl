@@ -94,10 +94,19 @@ namespace PublicShareOwnerControl.Controllers
             var stock = await _context.Stocks.Where(x => x.Id == id)
                 .Include(s => s.ShareHolders)
                 .Where(s => s.ShareHolders.Any(q => q.Id == issueObject.Owner)).FirstOrDefaultAsync();
+            stock = await AddShareholder(id, issueObject, stock);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        private async Task<Stock> AddShareholder(long id, IssueObject issueObject, Stock stock)
+        {
             if (stock == null)
             {
                 stock = await _context.Stocks.Include(x => x.ShareHolders).Where(x => x.Id == id).FirstOrDefaultAsync();
-                stock.ShareHolders.Add(new ShareHolder{Id = issueObject.Owner, Amount = issueObject.Amount});
+                stock.ShareHolders.Add(new Shareholder { Id = issueObject.Owner, Amount = issueObject.Amount });
             }
             else
             {
@@ -105,9 +114,7 @@ namespace PublicShareOwnerControl.Controllers
                 if (shareHolder != null) shareHolder.Amount += issueObject.Amount;
             }
 
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            return stock;
         }
 
         // Change ownership of existing shares
@@ -138,7 +145,7 @@ namespace PublicShareOwnerControl.Controllers
 
         // Change ownership of existing shares
         //[Authorize("BankingService.UserActions")]
-        [HttpPatch("{id}/LastTradedValue/{value}")]
+        [HttpPut("{id}/LastTradedValue/{value}")]
         public async Task<ActionResult> UpdateLastTradedValue([FromRoute] long id, [FromRoute] double value)
         {
             var stock = await _context.Stocks.Where(x => x.Id == id).FirstOrDefaultAsync();
@@ -163,7 +170,7 @@ namespace PublicShareOwnerControl.Controllers
             var shareHolderBuyer = stock.ShareHolders.FirstOrDefault(sh => sh.Id == ownershipObject.Buyer);
             if (shareHolderBuyer == null)
             {
-                shareHolderBuyer = new ShareHolder { Id = ownershipObject.Buyer, Amount = ownershipObject.Amount };
+                shareHolderBuyer = new Shareholder { Id = ownershipObject.Buyer, Amount = ownershipObject.Amount };
                 stock.ShareHolders.Add(shareHolderBuyer);
             }
             else
