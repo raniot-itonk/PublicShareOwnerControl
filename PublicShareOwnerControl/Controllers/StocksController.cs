@@ -59,11 +59,6 @@ namespace PublicShareOwnerControl.Controllers
                     .Where(s => s.ShareHolders.Any(q => q.Id == Guid.Parse(userIdGuid))).ToListAsync();
                 _logger.LogInformation("Got list of all stocks with owner {UserId}", userIdGuid);
             }
-
-            if (!stocks.Any())
-            {
-                return NotFound();
-            }
             
             return stocks;
         }
