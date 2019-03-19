@@ -53,20 +53,22 @@ namespace PublicShareOwnerControl
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, PublicShareOwnerContext context)
         {
             app.UseAuthentication();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
             }
             else
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                context.Database.Migrate();
             }
 
-            InitializeDatabase(app);
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -80,14 +82,6 @@ namespace PublicShareOwnerControl
             app.UseMvc();
         }
 
-        private static void InitializeDatabase(IApplicationBuilder app)
-        {
-            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                scope.ServiceProvider.GetRequiredService<PublicShareOwnerContext>().Database.Migrate();
-                //scope.ServiceProvider.GetRequiredService<PublicShareOwnerContext>().Database.EnsureCreated();
-            }
-        }
         private void SetupDatabase(IServiceCollection services)
         {
             services.AddDbContext<PublicShareOwnerContext>
