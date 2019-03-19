@@ -35,7 +35,7 @@ namespace PublicShareOwnerControl.Controllers
             {
                 return NotFound();
             }
-            _logger.LogInformation("Got {Stock}", stock);
+            _logger.LogInformation("Got {@Stock}", stock);
             return stock;
         }
 
@@ -77,7 +77,7 @@ namespace PublicShareOwnerControl.Controllers
             await _context.Stocks.AddAsync(stock);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Added Stock {Stock}", stock);
+            _logger.LogInformation("Added Stock {@Stock}", stock);
             return stock;
         }
 
@@ -153,7 +153,7 @@ namespace PublicShareOwnerControl.Controllers
             var oldLastTradedValue = stock.LastTradedValue;
             stock.LastTradedValue = value;
 
-            _logger.LogInformation("Updated the last traded value of stock {Stock} from {oldValue} to {NewValue}", stock.Name, oldLastTradedValue, stock.LastTradedValue);
+            _logger.LogInformation("Updated the last traded value of stock {StockName} from {oldValue} to {NewValue}", stock.Name, oldLastTradedValue, stock.LastTradedValue);
 
             await _context.SaveChangesAsync();
 
