@@ -37,7 +37,7 @@ namespace PublicShareOwnerControl.Migrations
                         name: "FK_Shareholder_Stocks_StockId",
                         column: x => x.StockId,
                         principalTable: "Stocks",
-                        principalColumn: "Id",
+                        principalColumn: "ShareholderId",
                         onDelete: ReferentialAction.Restrict);
                 });
 

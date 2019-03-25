@@ -23,14 +23,14 @@ namespace PublicShareOwnerControl.Migrations
 
             modelBuilder.Entity("PublicShareOwnerControl.DB.Shareholder", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ShareholderId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("Amount");
 
                     b.Property<long?>("StockId");
 
-                    b.HasKey("Id");
+                    b.HasKey("ShareholderId");
 
                     b.HasIndex("StockId");
 
@@ -39,7 +39,7 @@ namespace PublicShareOwnerControl.Migrations
 
             modelBuilder.Entity("PublicShareOwnerControl.DB.Stock", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("ShareholderId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -47,7 +47,7 @@ namespace PublicShareOwnerControl.Migrations
 
                     b.Property<string>("Name");
 
-                    b.HasKey("Id");
+                    b.HasKey("ShareholderId");
 
                     b.ToTable("Stocks");
                 });

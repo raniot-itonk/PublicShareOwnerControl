@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PublicShareOwnerControl.DB;
 
 namespace PublicShareOwnerControl.Migrations
 {
     [DbContext(typeof(PublicShareOwnerContext))]
-    partial class PublicShareOwnerContextModelSnapshot : ModelSnapshot
+    [Migration("20190325193535_AddedIdToShareholder")]
+    partial class AddedIdToShareholder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

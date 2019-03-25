@@ -39,28 +39,37 @@ namespace PublicShareOwnerControl.Controllers
             return stock;
         }
 
-        // Get all Stock or get all stock where owner is equal to userIdGuid
+        // Get all Stock, get all stock where OwnerId equal ownerId or
+        // get all stock where owner is equal to userIdGuid
         //[Authorize("BankingService.UserActions")]
         [HttpGet]
-        public async Task<ActionResult<List<Stock>>> GetStocks([FromQuery] string userIdGuid = null)
+        public async Task<ActionResult> GetStocks([FromQuery] string userIdGuid = null, string ownerId = null)
         {
+            //TODO validate that ShareholderId is same as in Header
+
             List<Stock> stocks;
-            if (userIdGuid == null)
+            if (userIdGuid == null && ownerId == null)
             {
                 stocks = await _context.Stocks.ToListAsync();
                 _logger.LogInformation("Got list of all stocks");
             }
-            else
+            else if (ownerId != null)
             {
-                //TODO validate that Id is same as in Header
-
                 stocks = await _context.Stocks
                     .Include(stock => stock.ShareHolders)
-                    .Where(s => s.ShareHolders.Any(q => q.Id == Guid.Parse(userIdGuid))).ToListAsync();
+                    .Where(s => s.StockOwner == Guid.Parse(ownerId)).ToListAsync();
+                _logger.LogInformation("Got stock with StockOwner {ownerId}", ownerId);
+
+                return Ok(StockWithOwnerInfo.FromStockList(stocks));
+            }
+            else
+            {
+                stocks = await _context.Stocks
+                    .Include(stock => stock.ShareHolders)
+                    .Where(s => s.ShareHolders.Any(q => q.ShareholderId == Guid.Parse(userIdGuid))).ToListAsync();
                 _logger.LogInformation("Got list of all stocks with owner {UserId}", userIdGuid);
             }
-            
-            return stocks;
+            return Ok(stocks);
         }
 
         // Add Stock
@@ -72,7 +81,8 @@ namespace PublicShareOwnerControl.Controllers
             {
                 LastTradedValue = 0,
                 Name = stockObject.Name,
-                ShareHolders = stockObject.Shares
+                ShareHolders = stockObject.Shares,
+                StockOwner = stockObject.StockOwner
             };
             await _context.Stocks.AddAsync(stock);
             await _context.SaveChangesAsync();
@@ -88,7 +98,7 @@ namespace PublicShareOwnerControl.Controllers
         {
             var stock = await _context.Stocks.Where(x => x.Id == id)
                 .Include(s => s.ShareHolders)
-                .Where(s => s.ShareHolders.Any(q => q.Id == issueObject.Owner)).FirstOrDefaultAsync();
+                .Where(s => s.ShareHolders.Any(q => q.ShareholderId == issueObject.Owner)).FirstOrDefaultAsync();
             stock = await AddShareholder(id, issueObject, stock);
 
             await _context.SaveChangesAsync();
@@ -101,11 +111,11 @@ namespace PublicShareOwnerControl.Controllers
             if (stock == null)
             {
                 stock = await _context.Stocks.Include(x => x.ShareHolders).Where(x => x.Id == id).FirstOrDefaultAsync();
-                stock.ShareHolders.Add(new Shareholder { Id = issueObject.Owner, Amount = issueObject.Amount });
+                stock.ShareHolders.Add(new Shareholder { ShareholderId = issueObject.Owner, Amount = issueObject.Amount });
             }
             else
             {
-                var shareHolder = stock.ShareHolders.FirstOrDefault(sh => sh.Id == issueObject.Owner);
+                var shareHolder = stock.ShareHolders.FirstOrDefault(sh => sh.ShareholderId == issueObject.Owner);
                 if (shareHolder != null) shareHolder.Amount += issueObject.Amount;
             }
 
@@ -119,7 +129,7 @@ namespace PublicShareOwnerControl.Controllers
         {
             var stock = await _context.Stocks.Where(x => x.Id == id)
                 .Include(s => s.ShareHolders)
-                .Where(s => s.ShareHolders.Any(q => q.Id == ownershipObject.Seller)).FirstOrDefaultAsync();
+                .Where(s => s.ShareHolders.Any(q => q.ShareholderId == ownershipObject.Seller)).FirstOrDefaultAsync();
             if (stock == null)
             {
                 _logger.LogError("Failed to find the Seller");
@@ -162,10 +172,10 @@ namespace PublicShareOwnerControl.Controllers
 
         private static void SetBuyerAmount(OwnershipObject ownershipObject, Stock stock)
         {
-            var shareHolderBuyer = stock.ShareHolders.FirstOrDefault(sh => sh.Id == ownershipObject.Buyer);
+            var shareHolderBuyer = stock.ShareHolders.FirstOrDefault(sh => sh.ShareholderId == ownershipObject.Buyer);
             if (shareHolderBuyer == null)
             {
-                shareHolderBuyer = new Shareholder { Id = ownershipObject.Buyer, Amount = ownershipObject.Amount };
+                shareHolderBuyer = new Shareholder { ShareholderId = ownershipObject.Buyer, Amount = ownershipObject.Amount };
                 stock.ShareHolders.Add(shareHolderBuyer);
             }
             else
@@ -176,7 +186,7 @@ namespace PublicShareOwnerControl.Controllers
 
         private ActionResult SetSellerAmount(OwnershipObject ownershipObject, Stock stock)
         {
-            var shareHolderSeller = stock.ShareHolders.FirstOrDefault(sh => sh.Id == ownershipObject.Seller);
+            var shareHolderSeller = stock.ShareHolders.FirstOrDefault(sh => sh.ShareholderId == ownershipObject.Seller);
             if (shareHolderSeller == null)
             {
                 _logger.LogError("Failed to find the Seller");
