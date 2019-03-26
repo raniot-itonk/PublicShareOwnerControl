@@ -55,9 +55,10 @@ namespace PublicShareOwnerControl.Controllers
             }
             else if (ownerId != null)
             {
+                var stockOwnerId = Guid.Parse(ownerId);
                 stocks = await _context.Stocks
                     .Include(stock => stock.ShareHolders)
-                    .Where(s => s.StockOwner == Guid.Parse(ownerId)).ToListAsync();
+                    .Where(s => s.StockOwner == stockOwnerId).ToListAsync();
                 _logger.LogInformation("Got stock with StockOwner {ownerId}", ownerId);
 
                 return Ok(StockWithOwnerInfo.FromStockList(stocks));
