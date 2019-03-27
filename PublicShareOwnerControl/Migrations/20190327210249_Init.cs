@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PublicShareOwnerControl.Migrations
 {
-    public partial class Stock : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,6 +14,7 @@ namespace PublicShareOwnerControl.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    StockOwner = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     LastTradedValue = table.Column<double>(nullable: false)
                 },
@@ -26,7 +27,9 @@ namespace PublicShareOwnerControl.Migrations
                 name: "Shareholder",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ShareholderId = table.Column<Guid>(nullable: false),
                     Amount = table.Column<int>(nullable: false),
                     StockId = table.Column<long>(nullable: true)
                 },
@@ -37,7 +40,7 @@ namespace PublicShareOwnerControl.Migrations
                         name: "FK_Shareholder_Stocks_StockId",
                         column: x => x.StockId,
                         principalTable: "Stocks",
-                        principalColumn: "ShareholderId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 

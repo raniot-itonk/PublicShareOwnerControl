@@ -10,8 +10,8 @@ using PublicShareOwnerControl.DB;
 namespace PublicShareOwnerControl.Migrations
 {
     [DbContext(typeof(PublicShareOwnerContext))]
-    [Migration("20190325193535_AddedIdToShareholder")]
-    partial class AddedIdToShareholder
+    [Migration("20190327210249_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
