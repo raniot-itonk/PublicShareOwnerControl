@@ -151,7 +151,7 @@ namespace PublicShareOwnerControl.Controllers
 
         // Change ownership of existing shares
         //[Authorize("BankingService.UserActions")]
-        [HttpPut("{id}/LastTradedValue/{value}")]
+        [HttpPut("{id}/LastTradedValue")]
         public async Task<ActionResult> UpdateLastTradedValue([FromRoute] long id, [FromBody] LastTradedValueResponse response)
         {
             if (id != response.Id) return BadRequest("Ids are not equal");
