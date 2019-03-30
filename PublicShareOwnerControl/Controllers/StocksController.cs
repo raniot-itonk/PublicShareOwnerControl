@@ -12,7 +12,7 @@ namespace PublicShareOwnerControl.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StocksController : ControllerBase
+    public partial class StocksController : ControllerBase
     {
         private readonly PublicShareOwnerContext _context;
         private readonly ILogger<StocksController> _logger;
@@ -152,8 +152,9 @@ namespace PublicShareOwnerControl.Controllers
         // Change ownership of existing shares
         //[Authorize("BankingService.UserActions")]
         [HttpPut("{id}/LastTradedValue/{value}")]
-        public async Task<ActionResult> UpdateLastTradedValue([FromRoute] long id, [FromRoute] double value)
+        public async Task<ActionResult> UpdateLastTradedValue([FromRoute] long id, [FromBody] LastTradedValueResponse response)
         {
+            if (id != response.Id) return BadRequest("Ids are not equal");
             var stock = await _context.Stocks.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (stock == null)
             {
@@ -162,7 +163,7 @@ namespace PublicShareOwnerControl.Controllers
             }
 
             var oldLastTradedValue = stock.LastTradedValue;
-            stock.LastTradedValue = value;
+            stock.LastTradedValue = response.Value;
 
             _logger.LogInformation("Updated the last traded value of stock {StockName} from {oldValue} to {NewValue}", stock.Name, oldLastTradedValue, stock.LastTradedValue);
 
