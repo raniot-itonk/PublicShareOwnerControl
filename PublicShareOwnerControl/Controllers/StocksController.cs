@@ -188,8 +188,8 @@ namespace PublicShareOwnerControl.Controllers
 
         private ActionResult SetSellerAmount(OwnershipObject ownershipObject, Stock stock)
         {
-            var shareHolderSeller = stock.ShareHolders.FirstOrDefault(sh => sh.ShareholderId == ownershipObject.Seller);
-            if (shareHolderSeller == null)
+            var shareholderSeller = stock.ShareHolders.FirstOrDefault(sh => sh.ShareholderId == ownershipObject.Seller);
+            if (shareholderSeller == null)
             {
                 _logger.LogError("Failed to find the Seller");
                 {
@@ -197,14 +197,12 @@ namespace PublicShareOwnerControl.Controllers
                 }
             }
 
-            shareHolderSeller.Amount -= ownershipObject.Amount;
-            if (shareHolderSeller.Amount < 0)
-            {
-                _logger.LogError("Seller cannot go below 0 shares");
-                return BadRequest("Seller cannot go below 0 shares");
-            }
+            _logger.LogInformation(@"shareholder Seller Amount {shareholderSellerAmount} request amount {requestAmount}", shareholderSeller.Amount, ownershipObject.Amount);
+            shareholderSeller.Amount -= ownershipObject.Amount;
+            if (shareholderSeller.Amount >= 0) return null;
+            _logger.LogError("Seller cannot go below 0 shares");
+            return BadRequest("Seller cannot go below 0 shares");
 
-            return null;
         }
     }
 }
