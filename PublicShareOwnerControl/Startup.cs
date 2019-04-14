@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,7 @@ namespace PublicShareOwnerControl
             //});
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+            services.AddHealthChecks().AddDbContextCheck<PublicShareOwnerContext>(tags: new[] { "ready" });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,7 +71,7 @@ namespace PublicShareOwnerControl
                 context.Database.Migrate();
             }
 
-
+            SetupReadyAndLiveHealthChecks(app);
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
@@ -86,6 +88,19 @@ namespace PublicShareOwnerControl
         {
             services.AddDbContext<PublicShareOwnerContext>
                 (options => options.UseSqlServer(Configuration.GetConnectionString("PublicShareOwnerDatabase")));
+        }
+        private static void SetupReadyAndLiveHealthChecks(IApplicationBuilder app)
+        {
+            // The readiness check uses all registered checks with the 'ready' tag.
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = (check) => check.Tags.Contains("ready"),
+            });
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                // Exclude all checks and return a 200-Ok.
+                Predicate = (_) => false
+            });
         }
     }
 }
