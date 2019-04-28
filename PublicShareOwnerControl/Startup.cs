@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Prometheus;
 using PublicShareOwnerControl.Authorization;
 using PublicShareOwnerControl.DB;
 using Swashbuckle.AspNetCore.Swagger;
@@ -72,6 +73,9 @@ namespace PublicShareOwnerControl
             }
 
             SetupReadyAndLiveHealthChecks(app);
+
+            app.UseMetricServer();
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 

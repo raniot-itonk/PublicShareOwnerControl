@@ -12,7 +12,7 @@ namespace PublicShareOwnerControl.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public partial class StocksController : ControllerBase
+    public class StocksController : ControllerBase
     {
         private readonly PublicShareOwnerContext _context;
         private readonly ILogger<StocksController> _logger;
@@ -28,7 +28,6 @@ namespace PublicShareOwnerControl.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Stock>> GetStock(long id)
         {
-            
             var stock = await _context.Stocks.Include(s => s.ShareHolders).FirstOrDefaultAsync(s2 => s2.Id == id);
 
             if (stock == null)
