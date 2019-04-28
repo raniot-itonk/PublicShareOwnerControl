@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
 using PublicShareOwnerControl.Authorization;
 using PublicShareOwnerControl.DB;
+using PublicShareOwnerControl.HostedServices;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace PublicShareOwnerControl
@@ -51,6 +52,7 @@ namespace PublicShareOwnerControl
             //    //    policy.Requirements.Add(new HasScopeRequirement("BankingService.broker&taxer", Configuration["IdentityServerBaseAddress"])));
             //});
 
+            services.AddHostedService<RequestStatsService>();
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddHealthChecks().AddDbContextCheck<PublicShareOwnerContext>(tags: new[] { "ready" });
         }
