@@ -38,6 +38,21 @@ namespace PublicShareOwnerControl.Controllers
             return stock;
         }
 
+        // Get single Stock information
+        //[Authorize("BankingService.UserActions")]
+        [HttpGet("{id}/name")]
+        public async Task<ActionResult<string>> GetStockName(long id)
+        {
+            var stock = await _context.Stocks.FirstOrDefaultAsync(s2 => s2.Id == id);
+
+            if (stock == null)
+            {
+                return NotFound();
+            }
+            _logger.LogInformation("Got {@Stock}", stock);
+            return stock.Name;
+        }
+
         // Get all Stock, get all stock where OwnerId equal ownerId or
         // get all stock where owner is equal to userIdGuid
         //[Authorize("BankingService.UserActions")]
